@@ -1,12 +1,38 @@
-# dsh 版本兼容说明（dsh-file-upload v0.2.0）
+# dsh 版本兼容说明（dsh-file-upload v0.2.1）
 
-> 依据：`T1-dsh版本差异报告.md`（2026-08-29，deepseek-ai/dsh 当前安装版 vs 最新版）。
+> 依据：`T1-dsh版本差异报告.md` + 对源码版 checkout 的实测核对。
 
-## 当前环境
+## 当前目标环境
 
-- 安装版：`@deepseek-ai/dsh@0.1.1-rc.2`（npm 全局，lib/ 编译产物）
-- 最新发布：`dsh-v0.1.2-alpha.1`（2026-08-27 GitHub Release，**npm 未发布**）
-- 结论：本插件 v0.2.0 在 **0.1.1-rc.2 上直接可用，无需改动**。
+- dsh：**`dsh-v0.1.5-rc.2`**（源码版 `D:\DeepSeek Harness 0.1.5-rc.2` @ `fb2c4b9e69`）
+- 本插件：**v0.2.1 已适配**。⚠️ **v0.2.0 在 0.1.5-rc.2 上完全无法加载**（见下），请用 v0.2.1+
+
+## DSH 0.1.5-rc.2 的三处破坏性变更（v0.2.1 已修）
+
+| 项 | 0.1.2-alpha.1 及更早 | 0.1.5-rc.2 | 本插件处理 |
+|---|---|---|---|
+| settings 注册辅助函数 | `import { settingsNamespace } from '@deepseek-ai/dsh-settings'` | **该导出已移除**（包只导出 `SettingsConflictError` / `SettingsProvider`(default) / `redactSecrets`） | 命名空间改为字面量 `'file-upload'`；注册/读写继续用 provider 级 `settings.register(NS, schema)` / `settings.get(NS)` / `settings.update(NS, patch)`（0.1.5-rc.2 中仍是公开契约） |
+| 官方草稿附件 API | `conversation.createDraftImages(files)` + `inputActions.addImages(ids)`（回滚 `releaseDraftImages`） | `conversation.createDrafts(sessionId, files)` + `inputActions.addAttachments(ids)`（回滚 `releaseDraftAttachments`） | 客户端**两代自动兼容**（存在性检查选路），图片仍进官方附件条 |
+| loader 条目 id | `file-upload` 可用 | DSH 自带 `@deepseek-ai/dsh-client-file-upload` **已占用 `file-upload`** | 本插件条目 id 改为 **`file-upup`**（settings 命名空间与 HTTP 路由保持 `file-upload` 不变，避免孤立已有用户设置） |
+
+### 已实测确认在 0.1.5-rc.2 中未变
+
+- `webServer.register({ kind: 'exact', path, handler })` ✓（重复 path 抛错，语义不变）
+- 服务名 `webServer` / `sessions` / `settings` / `attachments` / `llm` ✓
+- 客户端槽位 `conversation.input.left`（list/session）、`settings.section`、`settings.plugin.item` ✓
+- 客户端 inject 名 `@deepseek-ai/dsh-api-remotes` / `dsh-client-ui-renderer` / `dsh-client-ui-conversation` ✓
+- `@deepseek-ai/schemastery@3.18.2`（满足 peer `^3.18.1`）✓
+- 官方 `@deepseek-ai/dsh-client-file-upload` 是**上传基础设施服务**（Blob/流式接收 + staged receipt），不注册同名 settings 命名空间、也不占 `conversation.input.left`，与本插件无功能冲突 ✓
+
+### 本次验证方式
+
+`lib/index.js` 冒烟测试（链接真实 0.1.5-rc.2 的 schemastery 3.18.2）：模块导入 ✓ → `apply()` 注册 6 条路由 ✓ → `settings.register('file-upload', schema)` 收到合法 schema ✓ → `GET /api/file-upload/config` 200 且读到 settings 值 ✓ → `GET /api/file-upload/files` 200 列表正确 ✓
+
+---
+
+## 历史版本兼容（0.1.1-rc.2 / 0.1.2-alpha.1）
+
+v0.2.0 在 **0.1.1-rc.2** 上直接可用、在 **0.1.2-alpha.1** 上需下述 inject 改动（v0.2.0 已内含）。
 
 ## 升级到 v0.1.2-alpha.1 时必须改的地方（唯一破坏性变更）
 

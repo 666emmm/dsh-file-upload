@@ -114,7 +114,8 @@ For dsh **v0.1.2-alpha.1 and newer**: the `@deepseek-ai/dsh-client-runtime` pack
 
 | Your DSH version | Install this | Note |
 |---|---|---|
-| 0.1.2-alpha.1+ | `main` (v0.2.0+) | This fork's version — client inject uses `@deepseek-ai/dsh-client-ui-renderer` (see `COMPAT-dsh版本.md`) |
+| 0.1.5-rc.2+ | `main` (**v0.2.1+**) | ⚠️ v0.2.0 does **not** load here (the `settingsNamespace` export was removed); v0.2.1+ also supports the renamed draft-attachment API |
+| 0.1.2-alpha.1 | `main` (v0.2.0+) | Client inject uses `@deepseek-ai/dsh-client-ui-renderer` (see `COMPAT-dsh版本.md`) |
 | 0.1.1-rc.1 – 0.1.1-rc.2 | `main` (v0.2.0+) | Full features (including the official image rail) |
 | 0.1.0-rc.7 – 0.1.0-rc.8 | `main` (v0.1.5+) | Works fine; the official image rail auto-degrades to path text unless the session model accepts images. Conservative fallback: `v0.1.4` — `dsh plugin add github:a903067276-rgb/dsh-file-upload#v0.1.4` |
 | 0.1.0-rc.6 and older | `v0.1.2` — `dsh plugin add github:a903067276-rgb/dsh-file-upload#v0.1.2` | Last release without the settings card (the card uses the rc.7+ keyed slot contract) |

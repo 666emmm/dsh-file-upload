@@ -134,7 +134,8 @@ dsh plugin --profile web add "github:666emmm/dsh-file-upload#main"
 
 | 你的 DSH 版本 | 装这个 | 说明 |
 |---|---|---|
-| 0.1.2-alpha.1+ | `main`（v0.2.0+） | 本 fork 版本——client inject 已用 `@deepseek-ai/dsh-client-ui-renderer`（见 `COMPAT-dsh版本.md`） |
+| 0.1.5-rc.2+ | `main`（**v0.2.1+**） | ⚠️ v0.2.0 在此版本**装不起来**（`settingsNamespace` 导出已移除）；v0.2.1+ 同时兼容改名后的草稿附件 API |
+| 0.1.2-alpha.1 | `main`（v0.2.0+） | client inject 用 `@deepseek-ai/dsh-client-ui-renderer`（见 `COMPAT-dsh版本.md`） |
 | 0.1.1-rc.1 – 0.1.1-rc.2 | `main`（v0.2.0+） | 全功能（含官方附件条） |
 | 0.1.0-rc.7 – 0.1.0-rc.8 | `main`（v0.1.5+） | 正常；官方附件条自动降级为路径文本（除非会话模型收图）。保守回退：`v0.1.4` — `dsh plugin add github:a903067276-rgb/dsh-file-upload#v0.1.4` |
 | 0.1.0-rc.6 及更早 | `v0.1.2` — `dsh plugin add github:a903067276-rgb/dsh-file-upload#v0.1.2` | 最后一个无设置卡片的版本（设置卡片用 rc.7+ keyed slot 契约） |
