@@ -19,7 +19,7 @@
 
 - `webServer.register({ kind: 'exact', path, handler })` ✓（重复 path 抛错，语义不变）
 - 服务名 `webServer` / `sessions` / `settings` / `attachments` / `llm` ✓
-- 客户端槽位 `conversation.input.left`（list/session）、`settings.section`、`settings.plugin.item` ✓
+- 客户端槽位 `conversation.input.left`（list/session）、`settings.section` ✓（`settings.plugin.item` 引擎侧仍在，但本插件 v0.2.2 起**刻意不注册**——它只用于在官方「插件」页里再放一张卡片，会与独立的「文件上传」分区重复）
 - 客户端 inject 名 `@deepseek-ai/dsh-api-remotes` / `dsh-client-ui-renderer` / `dsh-client-ui-conversation` ✓
 - `@deepseek-ai/schemastery@3.18.2`（满足 peer `^3.18.1`）✓
 - 官方 `@deepseek-ai/dsh-client-file-upload` 是**上传基础设施服务**（Blob/流式接收 + staged receipt），不注册同名 settings 命名空间、也不占 `conversation.input.left`，与本插件无功能冲突 ✓

@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.2.2 — 设置入口去重
+
+### 变更
+
+- **不再注册 `settings.plugin.item`**：官方「插件」设置页的卡片列表是**两个账本的交集**——Host 提供的 settings 命名空间 ∩ 注册进该槽位的卡片（`ui-settings-plugins/src/client/tab-store.ts` 原注释：*"A served namespace no card claims renders nothing"*）。之前本插件两边都注册，于是「插件」页里出现了一张与独立分区完全重复的卡片。
+  现在**只保留独立分区** `settings.section`（label「文件上传」，order 40），「插件」页不再显示本插件的配置卡片。
+- settings 命名空间 `file-upload`、HTTP 路由 `/api/file-upload/*` 与已保存的用户设置**均不变**（卡片少了，配置与数据一个没动）。
+
 ## v0.2.1 — 适配 DSH 0.1.5-rc.2
 
 ### 修复（不兼容变更：v0.2.0 在 0.1.5-rc.2 上完全无法加载）
