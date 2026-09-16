@@ -1,6 +1,16 @@
 # dsh-file-upload：上传按钮 + 拖拽文件进对话（保存到项目 uploads/，路径文本进输入框）
 # 安装方式：软链到 ~/.dsh/profiles/web/node_modules/dsh-file-upload + 本文件追加 entry
 # 生效方式：重启 dsh web
+#
+# loader 条目 id 必须全局唯一（扁平命名空间，没有前缀/命名空间隔离）：
+# DSH 自带的 @deepseek-ai/dsh-web-app 已经占用了 id `file-upload`
+# （packages/bundle/web-app/cordis.patch.yml: `- id: file-upload` →
+#  @deepseek-ai/dsh-client-file-upload），它属于引擎自带、无法改名。
+# 两行同 id 会让加载器在挂载时报 `duplicate loader entry id: "file-upload"`
+# 硬失败（整个 profile 起不来），市场更新前的试启动校验也会因此回滚。
+# 所以本项目使用保留 id：file-upup。
+# 注意：只改这里的条目 id；`settingsNamespace('file-upload')` 与
+# `/api/file-upload/*` 路由保持不变，改名会丢掉用户已有设置。
 - insert:
-    - id: file-upload
+    - id: file-upup
       name: 'dsh-file-upload'

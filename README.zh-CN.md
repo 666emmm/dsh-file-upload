@@ -76,6 +76,13 @@ dsh plugin --profile web add "github:666emmm/dsh-file-upload#main"
 
 手动挂载（兜底）：见 [docs/install.md](docs/install.md) —— 软链到 `~/.dsh/profiles/web/node_modules/` + 在 `~/.dsh/cordis.patch.yml` 里加**单条** entry（双条会让插件 apply 两次、路由重复注册崩溃），然后重启。
 
+> **条目 id 说明**：本项目注册的 loader 条目 id 是 **`file-upup`**，不是 `file-upload`。DSH 自带的
+> `@deepseek-ai/dsh-web-app` 已经占用了 `file-upload`（指向 `@deepseek-ai/dsh-client-file-upload`），
+> 而加载器的条目 id 是扁平、无命名空间的：两行同 id 会让加载器在挂载时报
+> `duplicate loader entry id: "file-upload"` 并让整个 profile 起不来，市场的更新前试启动校验也会因此回滚。
+> 手动挂载时请照抄 `cordis.patch.yml` 里的 `id: file-upup`。设置命名空间与 HTTP 路由仍保留 `file-upload`
+> 字样（与条目 id 无关，改名会丢掉用户已有设置）。
+
 ## 使用
 
 1. 点上传图标选文件（可多选），或把文件/文件夹拖进窗口任意位置。

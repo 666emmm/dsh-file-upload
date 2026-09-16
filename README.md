@@ -78,6 +78,14 @@ Restart `dsh web` (bundle layers are composed at startup). Requires pnpm on PATH
 
 Manual mount (fallback): see [docs/install.md](docs/install.md) — symlink into `~/.dsh/profiles/web/node_modules/` plus a **single entry** in `~/.dsh/cordis.patch.yml` (a double entry makes the plugin apply twice and crash on duplicate route registration), then restart.
 
+> **Loader entry id**: this project registers the loader entry id **`file-upup`**, not `file-upload`. DSH's own
+> `@deepseek-ai/dsh-web-app` bundle already claims `file-upload` (pointing at `@deepseek-ai/dsh-client-file-upload`),
+> and loader entry ids live in one flat namespace: two rows with the same id make the loader fail hard at mount time
+> (`duplicate loader entry id: "file-upload"`) and the whole profile refuses to boot — the market's pre-update trial
+> validation rolls back for the same reason. Copy `id: file-upup` from `cordis.patch.yml` when mounting manually.
+> The settings namespace and HTTP routes keep the `file-upload` spelling on purpose (unrelated to the entry id, and
+> renaming them would orphan existing user settings).
+
 ## Usage
 
 1. Click the upload icon and pick files (multi-select), or drag files/folders anywhere into the window.

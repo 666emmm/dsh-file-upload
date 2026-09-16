@@ -17,7 +17,7 @@
 
    ```yaml
    - insert:
-       - id: file-upload
+       - id: file-upup
          name: dsh-file-upload
    ```
 
@@ -25,5 +25,9 @@
 
 ## 注意
 
+- **条目 id 必须用 `file-upup`，不要用 `file-upload`**：DSH 自带的 `@deepseek-ai/dsh-web-app`
+  已经注册了 id `file-upload`（`@deepseek-ai/dsh-client-file-upload`）。加载器的条目 id 是扁平的、
+  无命名空间，同 id 会让加载器在挂载时报 `duplicate loader entry id: "file-upload"` 并让整个
+  profile 起不来；市场的“试启动校验”也会因此回滚任何更新。
 - 保持插件目录可访问（不要移动/删除）；
 - 升级代码时把新文件覆盖进插件目录，重启即可（client 改动刷新页面即可生效）。
