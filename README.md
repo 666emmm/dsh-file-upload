@@ -27,7 +27,7 @@ The upload icon button in the composer tool row (official DSH design tokens, fol
 | **Any other file** | Archived to the library's `files/` subfolder, `<prefix> <path>` text goes into the draft |
 | Model without image support | Image falls back to archive + path text (never sent as an image block, no 400) |
 | **Uploaded-file management** | Browse the attachment library right in the settings card (image/file/folder tabs, paged, newest first): original name, size, mtime, relative path; copy the `@path` reference or delete a file in one click |
-| **Copy a file → read its real path (zero-copy)** | After copying a file/folder in the OS file manager, click the clipboard button next to the upload icon → host reads the system clipboard's FileDropList → inserts `@path` references (no content transfer, no disk copy, no size limit); pasted plain path text is also auto-converted to `@` references ("listen clipboard = all files" mode) |
+| **Copy a file → read its real path (zero-copy)** | After copying a file/folder in the OS file manager, click the clipboard button next to the upload icon → host reads the system clipboard's FileDropList → **inserts `@path` references at the caret** (replacing any selection; appends when no caret is readable), leaving the caret right after the insertion — existing draft text is never wiped; no content transfer, no disk copy, no size limit. Pasted plain path text is also auto-converted to `@` references ("listen clipboard = all files" mode) |
 
 - Single-file limit: **64 MB** (DeepSeek Files API hard limit; the local attachment store defaults to 20 MB — see *Large images* below)
 - Everything lands in the **attachment library**: `~/Documents/DSH/Attachments/images/<YYYY-MM-DD>/` (images) or `.../files/<YYYY-MM-DD>/` (other files) — configurable in Settings
@@ -114,6 +114,7 @@ For dsh **v0.1.2-alpha.1 and newer**: the `@deepseek-ai/dsh-client-runtime` pack
 
 | Your DSH version | Install this | Note |
 |---|---|---|
+| 0.2.0-rc.1 / rc.2 | `main` (**v0.3.0+**) | `settings` became `SettingsForms` (no `register`/`get`); the plugin detects this and persists settings to `$DSH_HOME/file-upload-settings.json` (see `COMPAT-dsh版本.md`) |
 | 0.1.5-rc.2+ | `main` (**v0.2.1+**) | ⚠️ v0.2.0 does **not** load here (the `settingsNamespace` export was removed); v0.2.1+ also supports the renamed draft-attachment API |
 | 0.1.2-alpha.1 | `main` (v0.2.0+) | Client inject uses `@deepseek-ai/dsh-client-ui-renderer` (see `COMPAT-dsh版本.md`) |
 | 0.1.1-rc.1 – 0.1.1-rc.2 | `main` (v0.2.0+) | Full features (including the official image rail) |

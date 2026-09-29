@@ -7,6 +7,26 @@
 - dsh：**`dsh-v0.1.5-rc.2`**（源码版 `D:\DeepSeek Harness 0.1.5-rc.2` @ `fb2c4b9e69`）
 - 本插件：**v0.2.1 已适配**。⚠️ **v0.2.0 在 0.1.5-rc.2 上完全无法加载**（见下），请用 v0.2.1+
 
+## DSH 0.2.0-rc.1 / rc.2 的破坏性变更（v0.3.0 已适配）
+
+> 上游已发布 `dsh-v0.2.0-rc.1`(2026-09-28) 与 `dsh-v0.2.0-rc.2`(2026-09-29)。
+> 下表按 tag 源码逐个核对得出。
+
+| 项 | ≤0.1.x | 0.2.0-rc.1+ | 本插件处理 |
+|---|---|---|---|
+| settings 服务 | `SettingsProvider`，有命名空间注册表：`register(ns, schema)` / `get(ns)` / `update(ns, patch)` | 换成 **`SettingsForms`**（配置文档编辑器：`configure/describe/update/replace/mutate`），**没有 `register`/`get`** | 能力探测：有注册表 → 照旧注册读写（行为不变）；没有 → 跳过注册 + `export const Config`（cordis 插件配置 schema），读取用 loader 注入的条目 config，写入落 `$DSH_HOME/file-upload-settings.json` |
+| 插件设置声明方式 | settings 命名空间 | 插件自身的 `export const Config = z.object({...})` + `apply(ctx, config)` | 两者都支持（同一份 schema 既用于注册表也作为 `Config` 导出） |
+| 客户端会话标准 props | `useConversation` / `useInput` / `inputActions` | **未变**（`ui-conversation/apply.ts` 仍是 `hooks: ['conversation','input'], props: ['inputActions']`） | 依赖此契约读实时草稿（v0.3.0 修复） |
+| composer 编辑器 | Lexical contenteditable，根节点带 `data-composer-input` | **未变** | 按光标插入依赖该属性做 DOM 定位 |
+| `InputActions.setDraft` | 整篇替换（`root.clear()` + 重建 + `selectEnd()`） | 内部改由 `DraftEditorRuntime` 承担，公开语义仍是整篇替换 | 因此 v0.3.0 自己拼接草稿并按光标插入，不再依赖"追加"语义 |
+| `conversation.input.left` 槽位 | `{ kind: 'list'; scope: 'session' }` | **未变**（仍无 owner；`InputZone` 带 `input` 的是 `conversation.input.dock`） | 只依赖会话标准 props |
+| `webServer.register({kind:'exact',path,handler})` | ✓ | ✓ | 不变 |
+
+⚠️ 未适配到的地方（如实说明）：0.2.0-rc.1 起本插件的设置**不再写进 dsh 的设置文档**，而是写
+`$DSH_HOME/file-upload-settings.json`（因为配置文档按条目 config 组织，写入命名空间需要上游
+公开更明确的映射）。读取时以 loader 注入的条目 config 打底、自管文件覆盖。若上游提供稳定的
+"按条目写配置"入口，可改为原生方式。
+
 ## DSH 0.1.5-rc.2 的三处破坏性变更（v0.2.1 已修）
 
 | 项 | 0.1.2-alpha.1 及更早 | 0.1.5-rc.2 | 本插件处理 |

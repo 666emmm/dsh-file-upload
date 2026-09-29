@@ -106,9 +106,14 @@ dsh plugin --profile web add "github:666emmm/dsh-file-upload#main"
 
 1. 在文件管理器/桌面**复制**文件或文件夹（Windows 资源管理器「复制」）；
 2. 在 dsh 里点剪贴板按钮 → host 读系统剪贴板 **FileDropList**（真实路径列表，不是字节）；
-3. 以 `@路径` / `@"路径"` 插入输入框——**不传内容、不落盘、无大小限制**，模型用 `read`/`glob` 按地址现读。
+3. 以 `@路径` / `@"路径"` **插入到光标处**（有选中内容则替换它；读不到光标时追加到末尾）——插入后光标落在插入内容之后，**已输入的文字一个字都不会丢**；**不传内容、不落盘、无大小限制**，模型用 `read`/`glob` 按地址现读。
 
-配套：设置里「监听剪贴板 = 全部文件」时，粘贴的**纯路径文本**（如复制的路径）也会自动转成 `@引用`。
+配套：设置里「监听剪贴板 = 全部文件」时，粘贴的**纯路径文本**（如复制的路径）也会自动转成 `@引用`（同样按光标插入）。
+
+> 实现说明：会话插槽的标准 props 只有 `useConversation` / `useInput` / `inputActions`，**没有 input 对象**；
+> 而 `inputActions.setDraft` 的语义是**整篇替换**（Lexical `root.clear()` + 重建 + 光标置尾）。所以本插件
+> 用 `useInput` 读实时草稿，自己按 composer（`[data-composer-input]`）里的真实选区拼接后再整体写回，
+> 并把光标还原到插入点之后；草稿里已有 `@引用` chip 时自动退化为追加（DOM 偏移与投影不一致，宁可不插错）。
 
 平台支持：Windows 用 PowerShell `Get-Clipboard -Format FileDropList`（完整支持，含中文路径）；macOS 用 osascript furl（尽力支持）；Linux 用 xclip / wl-paste 的 text/uri-list。
 
@@ -134,6 +139,7 @@ dsh plugin --profile web add "github:666emmm/dsh-file-upload#main"
 
 | 你的 DSH 版本 | 装这个 | 说明 |
 |---|---|---|
+| 0.2.0-rc.1 / rc.2 | `main`（**v0.3.0+**） | settings 服务换成 `SettingsForms`（无 `register`/`get`）；本插件能力探测降级：设置写入 `$DSH_HOME/file-upload-settings.json`（详见 `COMPAT-dsh版本.md`） |
 | 0.1.5-rc.2+ | `main`（**v0.2.1+**） | ⚠️ v0.2.0 在此版本**装不起来**（`settingsNamespace` 导出已移除）；v0.2.1+ 同时兼容改名后的草稿附件 API |
 | 0.1.2-alpha.1 | `main`（v0.2.0+） | client inject 用 `@deepseek-ai/dsh-client-ui-renderer`（见 `COMPAT-dsh版本.md`） |
 | 0.1.1-rc.1 – 0.1.1-rc.2 | `main`（v0.2.0+） | 全功能（含官方附件条） |
